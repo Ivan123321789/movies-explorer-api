@@ -1,6 +1,6 @@
 const allowedCors = [
-  'https://ivan.nomoreparties.sbs',
-  'http://ivan.nomoreparties.sbs',
+  'https://ivandiplom.nomoreparties.sbs',
+  'http://ivandiplom.nomoreparties.sbs',
   'http://localhost:3333',
   'http://localhost:4444',
 ];
