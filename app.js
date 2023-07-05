@@ -5,14 +5,9 @@ const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const { CORS } = require('./src/middlewares/CORS');
-const { requestLogger, requestLimiter, errorLogger } = require('./src/middlewares/logger');
-const { authValidation, regValidation } = require('./src/middlewares/validation');
-const { login, createUser } = require('./src/controllers/users');
-const auth = require('./src/middlewares/auth');
-const userRouter = require('./src/routes/users');
-const movieRouter = require('./src/routes/movies');
-const Unauthorized = require('../errors/Unauthorized');
-const { neededAutorisation } = require('../utils/errorMessage');
+const { requestLogger, errorLogger } = require('./src/middlewares/logger');
+const requestLimiter = require('./src/middlewares/requestLimiter');
+const routes = require('./src/routes/index');
 const errorHandler = require('./src/middlewares/errorHandler');
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process.env;
@@ -32,15 +27,7 @@ app.use((req, res, next) => {
 
 app.use(requestLogger);
 app.use(requestLimiter);
-app.post('/signin', authValidation, login);
-app.post('/signup', regValidation, createUser);
-app.use('/users', auth, userRouter);
-app.use('/movies', auth, movieRouter);
-
-app.use('/', (req, res, next) => {
-  next(new Unauthorized(neededAutorisation));
-});
-
+app.use(routes);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
