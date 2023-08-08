@@ -67,8 +67,8 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 module.exports.patchUser = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, {
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, email }, {
     new: true,
     runValidators: true,
   })
@@ -79,7 +79,11 @@ module.exports.patchUser = (req, res, next) => {
       res.status(OK).send({ user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        next(new Conflict(existUserAlready));
+      }
+	    
+	  if (err.name === 'ValidationError') {
         next(new BadRequest(validationError));
       } else {
         next(err);
